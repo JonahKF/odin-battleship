@@ -1,4 +1,4 @@
-import { Ship, Gameboard } from "./index.js";
+import { Ship, Gameboard, Player } from "./gameboard.js";
 
 test("tests Ship existing", () => {
   expect(typeof new Ship("carrier")).toEqual("object");
