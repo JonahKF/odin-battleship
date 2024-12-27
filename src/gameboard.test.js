@@ -24,6 +24,7 @@ test("tests ship placement", () => {
   board.placeShip(carrier, [0, 0], false);
   board.placeShip(submarine, [2, 3], true);
 
+  expect(typeof board.board[0][0]).toEqual("object");
   expect(board.board[0][0].type).toEqual("carrier");
   expect(board.board[0][1].type).toEqual("carrier");
   expect(board.board[0][4].type).toEqual("carrier");

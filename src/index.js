@@ -24,7 +24,7 @@ class Ship {
   }
 
   isSunk() {
-    if (this.hits >= this.length) return true;
+    return this.hits >= this.length;
   }
 }
 
@@ -59,6 +59,7 @@ class Gameboard {
     return true;
   }
 
+  // board.placeShip(carrier, [0, 0], false // Places horizontally on top left
   placeShip(ship, coords, isVertical = false) {
     if (!this.checkValidPlacement(ship, coords, isVertical)) return false;
 
@@ -76,7 +77,33 @@ class Gameboard {
     return true;
   }
 
-  receiveAttack(coords) {}
+  receiveAttack(coords) {
+    const [row, col] = coords;
+    const target = this.board[row][col];
+
+    if (target === null) {
+      this.missedShots.push(coords);
+      return "miss";
+    }
+
+    target.hit();
+    return "hit";
+  }
+
+  checkSunkShips() {
+    // Returns true if all ships sunk, false if ships remain
+    if (this.ships.length === 0) return true;
+
+    this.ships.forEach((ship, index) => {
+      if (ship.sunk) this.ships.splice(index, 1);
+    });
+
+    return false;
+  }
+
+  displayMissedAttacks() {
+    // Update DOM grid w/ missed attacks
+  }
 
   // logBoard() {
   //   let header = "   0 1 2 3 4 5 6 7 8 9";
@@ -89,7 +116,12 @@ class Gameboard {
   // }
 }
 
-// board.placeShip(carrier, [0, 0], false // Places horizontally on top left
+class Player {
+  constructor(isHuman = false) {
+    this.human = isHuman;
+    this.gameboard = new Gameboard();
+  }
+}
 
 const gameController = () => {};
 
