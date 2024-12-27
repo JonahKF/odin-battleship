@@ -83,6 +83,7 @@ class Gameboard {
 
     if (target === null) {
       this.missedShots.push(coords);
+      // console.log(`Missed shots: ${this.missedShots}`);
       return "miss";
     }
 
@@ -117,7 +118,8 @@ class Gameboard {
 }
 
 class Player {
-  constructor(isHuman = false) {
+  constructor(name, isHuman = false) {
+    this.name = name;
     this.human = isHuman;
     this.gameboard = new Gameboard();
   }

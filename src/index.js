@@ -23,8 +23,8 @@ class GameController {
 
   startGame() {
     // Create new Players (human and AI)
-    this.playerOne = new Player(true);
-    this.playerTwo = new Player();
+    this.playerOne = new Player("Player One", true);
+    this.playerTwo = new Player("Computer Player");
 
     // Set currentPlayer to playerOne
     this.currentPlayer = this.playerOne;
@@ -34,10 +34,11 @@ class GameController {
     const submarineOne = new Ship("submarine");
     const carrierTwo = new Ship("carrier");
     const submarineTwo = new Ship("submarine");
-    this.playerOne.gameboard.placeShip(carrierOne, [0, 0], false);
-    this.playerOne.gameboard.placeShip(submarineOne, [2, 3], true);
+    this.playerOne.gameboard.placeShip(carrierOne, [2, 3], false);
+    this.playerOne.gameboard.placeShip(submarineOne, [5, 4], true);
     this.playerTwo.gameboard.placeShip(carrierTwo, [0, 0], false);
     this.playerTwo.gameboard.placeShip(submarineTwo, [2, 3], true);
+    this.gamePhase = "playing";
 
     // Return object with both players
     return { playerOne: this.playerOne, playerTwo: this.playerTwo };
@@ -61,9 +62,17 @@ class GameController {
 
     // If successful (placed can be false if coords occupied already):
     if (placed) {
-      //   - Increment currentShipIndex
-      //   - Check if all ships placed for current player
-      //   - Switch players or start game if both done
+      this.currentShipIndex++;
+      // Check if all ships placed
+      if (this.currentShipIndex === this.shipTypes.length) {
+        if (this.currentPlayer === this.playerOne) {
+          this.currentPlayer = this.playerTwo;
+          this.currentShipIndex = 0; // Reset for player 2
+        } else {
+          this.gamePhase = "playing";
+          this.currentPlayer = this.playerOne;
+        }
+      }
     }
 
     // Return whether placement was successful
@@ -75,14 +84,42 @@ class GameController {
     if (this.gamePhase !== "playing") return false;
 
     // Get opponent's board
-    // Make attack and get result
-    // Switch turns if attack was valid
-    // Return attack result ("hit"/"miss")
+    const targetBoard =
+      this.currentPlayer === this.playerOne
+        ? this.playerTwo.gameboard
+        : this.playerOne.gameboard;
+
+    const result = targetBoard.receiveAttack(coords);
+    if (result) {
+      this.switchTurn();
+
+      if (!this.currentPlayer.human) {
+        setTimeout(() => {
+          this.computerAttack();
+        }, 500);
+      }
+    }
+    return result; // "hit" or "miss"
   }
 
   switchTurn() {
     this.currentPlayer =
       this.currentPlayer === this.playerOne ? this.playerTwo : this.playerOne;
+    console.log(`Switching to ${this.currentPlayer.name}`);
+  }
+
+  computerAttack() {
+    const getRandomCoord = () => {
+      return [Math.floor(Math.random() * 10), Math.floor(Math.random() * 10)];
+    };
+
+    let coords = getRandomCoord();
+    while (this.playerOne.gameboard.missedShots.includes(coords)) {
+      coords = getRandomCoord();
+    }
+
+    console.log(`AI is attacking ${coords}`);
+    return this.makeAttack(coords);
   }
 
   getGameState() {
@@ -130,6 +167,7 @@ class ScreenController {
 
         // Add appropriate classes
         if (ship !== null && !isEnemy) {
+          // remove enemy check to show enemy board
           cell.classList.add("ship");
           cell.innerHTML = ship.type[0].toUpperCase();
           if (ship.sunk) cell.classList.add("sunk");
@@ -177,8 +215,10 @@ class ScreenController {
   }
 
   handleAttack(coords) {
+    console.log("Handling attack.");
     const result = this.gameController.makeAttack(coords);
     if (result) {
+      console.log(result);
       this.updateDisplay();
     }
   }

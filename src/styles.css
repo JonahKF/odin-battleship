@@ -163,6 +163,10 @@ hr {
   /* border: 1px solid #333; */
 }
 
+.miss {
+  background-color: crimson;
+}
+
 .active {
   /* This will be the board of the human player */
 }
