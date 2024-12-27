@@ -96,13 +96,17 @@ class GameController {
       this.switchTurn();
 
       if (!this.currentPlayer.human) {
-        setTimeout(() => {
-          this.computerAttack();
-        }, 500);
-        this.checkVictory();
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            const computerResult = this.computerAttack();
+            this.checkVictory();
+            resolve({ playerResult: result, computerResult });
+          }, 500);
+        });
       }
+      return Promise.resolve({ playerResult: result });
     }
-    return result; // "hit" or "miss"
+    return Promise.resolve(false);
   }
 
   switchTurn() {
@@ -140,6 +144,10 @@ class GameController {
     return false;
   }
 
+  newGamePrompt() {
+    // Trigger popup to start new game
+  }
+
   getGameState() {
     return {
       currentPlayer: this.currentPlayer,
@@ -162,7 +170,7 @@ class ScreenController {
   }
 
   renderBoard(htmlBoard, playerBoard, missedShots, isEnemy) {
-    // Clear dom board
+    // Clear DOM board
     htmlBoard.innerHTML = "";
 
     const rowHeaders = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
@@ -232,9 +240,9 @@ class ScreenController {
     }
   }
 
-  handleAttack(coords) {
+  async handleAttack(coords) {
     console.log("Handling attack.");
-    const result = this.gameController.makeAttack(coords);
+    const result = await this.gameController.makeAttack(coords);
     if (result) {
       console.log(result);
       this.updateDisplay();
