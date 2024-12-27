@@ -34,6 +34,7 @@ class Gameboard {
       .fill(null)
       .map(() => Array(10).fill(null));
     this.missedShots = [];
+    this.hitShots = [];
     this.ships = [];
   }
 
@@ -83,11 +84,11 @@ class Gameboard {
 
     if (target === null) {
       this.missedShots.push(coords);
-      // console.log(`Missed shots: ${this.missedShots}`);
       return "miss";
     }
 
     target.hit();
+    this.hitShots.push(coords);
     return "hit";
   }
 
@@ -101,16 +102,6 @@ class Gameboard {
 
     return false;
   }
-
-  // logBoard() {
-  //   let header = "   0 1 2 3 4 5 6 7 8 9";
-  //   console.log(header);
-
-  //   this.board.forEach((row, index) => {
-  //     let rowStr = row.map((cell) => (cell === null ? "·" : cell)).join(" ");
-  //     console.log(`${index}  ${rowStr}`);
-  //   });
-  // }
 }
 
 class Player {

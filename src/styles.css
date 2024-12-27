@@ -167,6 +167,10 @@ hr {
   background-color: crimson;
 }
 
+.hit {
+  background-color: lightgreen;
+}
+
 .active {
   /* This will be the board of the human player */
 }

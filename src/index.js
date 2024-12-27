@@ -155,6 +155,8 @@ class GameController {
       playerOneBoard: this.playerOne.gameboard.board,
       playerTwoBoard: this.playerTwo.gameboard.board,
       currentShipType: this.shipTypes[this.currentShipIndex],
+      playerOneHits: this.playerOne.gameboard.hitShots,
+      playerTwoHits: this.playerTwo.gameboard.hitShots,
       playerOneMisses: this.playerOne.gameboard.missedShots,
       playerTwoMisses: this.playerTwo.gameboard.missedShots,
     };
@@ -169,7 +171,7 @@ class ScreenController {
     this.isVertical = false;
   }
 
-  renderBoard(htmlBoard, playerBoard, missedShots, isEnemy) {
+  renderBoard(htmlBoard, playerBoard, hitShots, missedShots, isEnemy) {
     // Clear DOM board
     htmlBoard.innerHTML = "";
 
@@ -196,7 +198,11 @@ class ScreenController {
           // remove enemy check to show enemy board
           cell.classList.add("ship");
           cell.innerHTML = ship.type[0].toUpperCase();
-          if (ship.sunk) cell.classList.add("sunk");
+        }
+
+        // Check if cell is in hitShots
+        if (hitShots.some(([r, c]) => r === row && c === col)) {
+          cell.classList.add("hit");
         }
 
         // Check if cell is in missedShots
@@ -258,12 +264,14 @@ class ScreenController {
         this.renderBoard(
           this.boardOne,
           gameState.playerOneBoard,
+          gameState.playerOneHits,
           gameState.playerOneMisses,
           false,
         );
         this.renderBoard(
           this.boardTwo,
           gameState.playerTwoBoard,
+          gameState.playerTwoHits,
           gameState.playerTwoMisses,
           true,
         );
@@ -271,12 +279,14 @@ class ScreenController {
         this.renderBoard(
           this.boardOne,
           gameState.playerOneBoard,
+          gameState.playerOneHits,
           gameState.playerOneMisses,
           true,
         );
         this.renderBoard(
           this.boardTwo,
           gameState.playerTwoBoard,
+          gameState.playerTwoHits,
           gameState.playerTwoMisses,
           false,
         );
@@ -286,12 +296,14 @@ class ScreenController {
       this.renderBoard(
         this.boardOne,
         gameState.playerOneBoard,
+        gameState.playerOneHits,
         gameState.playerOneMisses,
         false,
       );
       this.renderBoard(
         this.boardTwo,
         gameState.playerTwoBoard,
+        gameState.playerTwoHits,
         gameState.playerTwoMisses,
         true,
       );
