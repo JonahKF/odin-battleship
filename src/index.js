@@ -90,6 +90,8 @@ class GameController {
         : this.playerOne.gameboard;
 
     const result = targetBoard.receiveAttack(coords);
+    this.checkVictory();
+
     if (result) {
       this.switchTurn();
 
@@ -97,6 +99,7 @@ class GameController {
         setTimeout(() => {
           this.computerAttack();
         }, 500);
+        this.checkVictory();
       }
     }
     return result; // "hit" or "miss"
@@ -120,6 +123,21 @@ class GameController {
 
     console.log(`AI is attacking ${coords}`);
     return this.makeAttack(coords);
+  }
+
+  checkVictory() {
+    const playerOneVictory = this.playerTwo.gameboard.checkSunkShips();
+    const playerTwoVictory = this.playerOne.gameboard.checkSunkShips();
+
+    if (playerOneVictory) {
+      console.log(`${this.playerOne.name} wins!`);
+      return true;
+    }
+    if (playerTwoVictory) {
+      console.log(`${this.playerTwo.name} wins!`);
+      return true;
+    }
+    return false;
   }
 
   getGameState() {
