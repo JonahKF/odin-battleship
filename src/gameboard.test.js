@@ -15,3 +15,17 @@ test("tests Ship lengths", () => {
 test("tests Gameboard existing", () => {
   expect(typeof new Gameboard()).toEqual("object");
 });
+
+test("tests ship placement", () => {
+  const board = new Gameboard();
+  const carrier = new Ship("carrier");
+  const submarine = new Ship("submarine");
+
+  board.placeShip(carrier, [0, 0], false);
+  board.placeShip(submarine, [2, 3], true);
+
+  expect(board.board[0][0].type).toEqual("carrier");
+  expect(board.board[0][1].type).toEqual("carrier");
+  expect(board.board[0][4].type).toEqual("carrier");
+  expect(board.board[0][5]).toEqual(null);
+});

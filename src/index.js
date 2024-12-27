@@ -37,13 +37,44 @@ class Gameboard {
     this.ships = [];
   }
 
-  checkValidPlacement(ship, coords, vertical) {
-    // Use ship.length
+  checkValidPlacement(ship, coords, isVertical) {
+    const [row, col] = coords;
+
+    // Check if out of bounds
+    if (isVertical) {
+      if (row + ship.length > 10) return false;
+    } else {
+      if (col + ship.length > 10) return false;
+    }
+
+    // Check if space is occupied
+    for (let i = 0; i < ship.length; i++) {
+      if (isVertical) {
+        if (this.board[row + i][col] !== null) return false;
+      } else {
+        if (this.board[row][col + i] !== null) return false;
+      }
+    }
+
+    return true;
   }
 
-  placeShip(ship, coords, vertical = false) {
-    const [row, column] = coords;
-  } // A cell (arr[x][y]) can be made to = ship, which will contain a reference to a single ship
+  placeShip(ship, coords, isVertical = false) {
+    if (!this.checkValidPlacement(ship, coords, isVertical)) return false;
+
+    const [row, col] = coords;
+
+    for (let i = 0; i < ship.length; i++) {
+      if (isVertical) {
+        this.board[row + i][col] = ship;
+      } else {
+        this.board[row][col + i] = ship;
+      }
+    }
+
+    this.ships.push(ship);
+    return true;
+  }
 
   receiveAttack(coords) {}
 
@@ -59,5 +90,7 @@ class Gameboard {
 }
 
 // board.placeShip(carrier, [0, 0], false // Places horizontally on top left
+
+const gameController = () => {};
 
 export { Ship, Gameboard }; // Export for testing
