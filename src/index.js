@@ -181,30 +181,28 @@ class ScreenController {
         cell.dataset.col = col;
 
         const ship = playerBoard[row][col];
+        const isHit = hitShots.some(([r, c]) => r === row && c === col);
+        const isMissed = missedShots.some(([r, c]) => r === row && c === col);
+        const isAttacked = isHit || isMissed;
 
-        // Add appropriate classes
         if (ship !== null && !isEnemy) {
-          // remove isEnemy check to show enemy board for debugging
           cell.classList.add("ship");
           cell.innerHTML = ship.type[0].toUpperCase();
         }
 
-        // Check if cell is in hitShots
-        if (hitShots.some(([r, c]) => r === row && c === col)) {
-          cell.classList.add("hit");
-        }
-
-        // Check if cell is in missedShots
-        if (missedShots.some(([r, c]) => r === row && c === col)) {
-          cell.classList.add("miss");
-        }
+        if (isHit) cell.classList.add("hit");
+        if (isMissed) cell.classList.add("miss");
 
         // Add event listeners based on game phase
         if (this.gameController.gamePhase === "setup" && !isEnemy) {
           cell.addEventListener("click", () =>
             this.handlePlacement([row, col]),
           );
-        } else if (this.gameController.gamePhase === "playing" && isEnemy) {
+        } else if (
+          this.gameController.gamePhase === "playing" &&
+          isEnemy &&
+          !isAttacked
+        ) {
           cell.addEventListener("click", () => this.handleAttack([row, col]));
         }
 
