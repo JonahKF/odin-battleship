@@ -93,38 +93,25 @@ class GameController {
     const result = targetBoard.receiveAttack(coords);
     let isVictory = this.checkVictory(targetPlayer);
 
-    if (isVictory) {
-      return Promise.resolve({
-        playerResult: result,
-        isVictory,
-        winner: isVictory ? this.currentPlayer.name : null,
-      });
-    }
-
     if (result) {
-      this.switchTurn();
+      if (!isVictory) this.switchTurn();
 
-      if (!this.currentPlayer.human) {
-        return new Promise((resolve) => {
-          setTimeout(() => {
-            const computerResult = this.computerAttack();
-            const computerVictory = this.checkVictory(this.playerOne);
-            resolve({
-              playerResult: result,
-              computerResult,
-              isVictory: isVictory || computerVictory,
-              winner: computerVictory ? this.playerTwo.name : null,
-            });
-          }, 500);
-        });
+      if (!isVictory && !this.currentPlayer.human) {
+        return {
+          playerResult: result,
+          isVictory,
+          winner: isVictory ? this.currentPlayer.name : null,
+          computerTurn: true,
+        };
       }
-      return Promise.resolve({
+      return {
         playerResult: result,
         isVictory,
         winner: isVictory ? this.currentPlayer.name : null,
-      });
+        computerTurn: false,
+      };
     }
-    return Promise.resolve(false);
+    return false;
   }
 
   switchTurn() {
@@ -256,6 +243,22 @@ class ScreenController {
 
       if (result.isVictory) {
         this.showVictoryPrompt(result.winner);
+        return;
+      }
+
+      // Computer attack logic
+      if (result.computerTurn) {
+        setTimeout(async () => {
+          const computerResult = this.gameController.computerAttack();
+          this.updateDisplay();
+
+          const computerVictory = this.gameController.checkVictory(
+            this.gameController.playerOne,
+          );
+          if (computerVictory) {
+            this.showVictoryPrompt(this.gameController.playerTwo.name);
+          }
+        }, 500);
       }
     }
   }

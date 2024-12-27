@@ -93,14 +93,9 @@ class Gameboard {
   }
 
   checkSunkShips() {
-    // Returns true if all ships sunk, false if ships remain
-    if (this.ships.length === 0) return true;
+    this.ships = this.ships.filter((ship) => !ship.sunk);
 
-    this.ships.forEach((ship, index) => {
-      if (ship.sunk) this.ships.splice(index, 1);
-    });
-
-    return false;
+    return this.ships.length === 0;
   }
 }
 
