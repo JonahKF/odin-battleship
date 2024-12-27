@@ -1,5 +1,5 @@
 import { Ship, Gameboard, Player } from "./gameboard.js";
-import { GameController } from "./index.js";
+// import { GameController } from "./index.js";
 
 // Ship Test Suite
 test("tests Ship existing", () => {
@@ -12,6 +12,15 @@ test("tests Ship lengths", () => {
   expect(new Ship("submarine").length).toEqual(3);
   expect(new Ship("destroyer").length).toEqual(3);
   expect(new Ship("patrolboat").length).toEqual(2);
+});
+
+test("ship hits and sinking", () => {
+  const carrier = new Ship("carrier");
+  const submarine = new Ship("submarine");
+
+  carrier.hit();
+  carrier.hit();
+  expect(carrier.hits).toEqual(2);
 });
 
 // Gameboard Test Suite
