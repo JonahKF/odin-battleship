@@ -28,4 +28,28 @@ class Ship {
   }
 }
 
-class Gameboard {}
+class Gameboard {
+  constructor() {
+    this.board = Array(10)
+      .fill(null)
+      .map(() => Array(10).fill(null));
+    this.missedShots = [];
+    this.ships = [];
+  }
+
+  placeShip(ship, coords, vertical = false) {} // A cell (arr[x][y]) can be made to = ship, which will contain a reference to a single ship
+
+  receiveAttack(coords) {}
+
+  // logBoard() {
+  //   let header = "   0 1 2 3 4 5 6 7 8 9";
+  //   console.log(header);
+
+  //   this.board.forEach((row, index) => {
+  //     let rowStr = row.map((cell) => (cell === null ? "·" : cell)).join(" ");
+  //     console.log(`${index}  ${rowStr}`);
+  //   });
+  // }
+}
+
+export { Gameboard }; // Export for testing
