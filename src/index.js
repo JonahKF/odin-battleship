@@ -37,7 +37,13 @@ class Gameboard {
     this.ships = [];
   }
 
-  placeShip(ship, coords, vertical = false) {} // A cell (arr[x][y]) can be made to = ship, which will contain a reference to a single ship
+  checkValidPlacement(ship, coords, vertical) {
+    // Use ship.length
+  }
+
+  placeShip(ship, coords, vertical = false) {
+    const [row, column] = coords;
+  } // A cell (arr[x][y]) can be made to = ship, which will contain a reference to a single ship
 
   receiveAttack(coords) {}
 
@@ -52,4 +58,6 @@ class Gameboard {
   // }
 }
 
-export { Gameboard }; // Export for testing
+// board.placeShip(carrier, [0, 0], false // Places horizontally on top left
+
+export { Ship, Gameboard }; // Export for testing
