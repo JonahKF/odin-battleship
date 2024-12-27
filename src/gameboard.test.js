@@ -16,11 +16,16 @@ test("tests Ship lengths", () => {
 
 test("ship hits and sinking", () => {
   const carrier = new Ship("carrier");
-  const submarine = new Ship("submarine");
+  const patrolBoat = new Ship("patrolboat");
 
   carrier.hit();
   carrier.hit();
   expect(carrier.hits).toEqual(2);
+  expect(carrier.sunk).toBe(false);
+
+  patrolBoat.hit();
+  patrolBoat.hit();
+  expect(patrolBoat.sunk).toBe(true);
 });
 
 // Gameboard Test Suite
@@ -36,11 +41,15 @@ test("tests ship placement", () => {
   board.placeShip(carrier, [0, 0], false);
   board.placeShip(submarine, [2, 3], true);
 
+  // The following tests should assume the functions succeed
   expect(typeof board.board[0][0]).toEqual("object");
   expect(board.board[0][0].type).toEqual("carrier");
   expect(board.board[0][1].type).toEqual("carrier");
   expect(board.board[0][4].type).toEqual("carrier");
   expect(board.board[0][5]).toEqual(null);
+
+  // The following tests should return false, or otherwise negatives
+  expect(board.placeShip(carrier, [0, 0], false)).toBe(false);
 });
 
 // Player Test Suite
@@ -59,4 +68,7 @@ test("tests ship placement within a Player gameboard", () => {
   expect(testPlayer.gameboard.board[0][1].type).toEqual("carrier");
   expect(testPlayer.gameboard.board[0][4].type).toEqual("carrier");
   expect(testPlayer.gameboard.board[0][5]).toEqual(null);
+
+  const humanPlayer = new Player(true);
+  expect(humanPlayer.human).toBe(true);
 });

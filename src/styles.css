@@ -82,7 +82,34 @@ h6 {
 .boards-container {
 }
 
-.board {
+.board-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.board-title {
+  width: 100%;
+  justify-self: center;
+  align-self: center;
+}
+
+.board-one,
+.board-two {
+  /* 11x11 grid, incl. labels */
+  display: grid;
+  grid-template-columns: repeat(11, 1fr);
+  grid-template-rows: repeat(11, 1fr);
+  gap: 1px;
+}
+
+.cell {
+  aspect-ratio: 1;
+  border: 1px solid #333;
+}
+
+.label {
+  aspect-ratio: 1;
+  border: 1px solid #777;
 }
 
 .active {
