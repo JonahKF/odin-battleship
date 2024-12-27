@@ -80,17 +80,26 @@ class GameController {
   }
 
   makeAttack(coords) {
-    // If not in playing phase, return false
     if (this.gamePhase !== "playing") return false;
 
-    // Get opponent's board
     const targetBoard =
       this.currentPlayer === this.playerOne
         ? this.playerTwo.gameboard
         : this.playerOne.gameboard;
 
+    const targetPlayer =
+      this.currentPlayer === this.playerOne ? this.playerTwo : this.playerOne;
+
     const result = targetBoard.receiveAttack(coords);
-    this.checkVictory();
+    let isVictory = this.checkVictory(targetPlayer);
+
+    if (isVictory) {
+      return Promise.resolve({
+        playerResult: result,
+        isVictory,
+        winner: isVictory ? this.currentPlayer.name : null,
+      });
+    }
 
     if (result) {
       this.switchTurn();
@@ -99,12 +108,21 @@ class GameController {
         return new Promise((resolve) => {
           setTimeout(() => {
             const computerResult = this.computerAttack();
-            this.checkVictory();
-            resolve({ playerResult: result, computerResult });
+            const computerVictory = this.checkVictory(this.playerOne);
+            resolve({
+              playerResult: result,
+              computerResult,
+              isVictory: isVictory || computerVictory,
+              winner: computerVictory ? this.playerTwo.name : null,
+            });
           }, 500);
         });
       }
-      return Promise.resolve({ playerResult: result });
+      return Promise.resolve({
+        playerResult: result,
+        isVictory,
+        winner: isVictory ? this.currentPlayer.name : null,
+      });
     }
     return Promise.resolve(false);
   }
@@ -129,23 +147,8 @@ class GameController {
     return this.makeAttack(coords);
   }
 
-  checkVictory() {
-    const playerOneVictory = this.playerTwo.gameboard.checkSunkShips();
-    const playerTwoVictory = this.playerOne.gameboard.checkSunkShips();
-
-    if (playerOneVictory) {
-      console.log(`${this.playerOne.name} wins!`);
-      return true;
-    }
-    if (playerTwoVictory) {
-      console.log(`${this.playerTwo.name} wins!`);
-      return true;
-    }
-    return false;
-  }
-
-  newGamePrompt() {
-    // Trigger popup to start new game
+  checkVictory(player) {
+    return player.gameboard.checkSunkShips();
   }
 
   getGameState() {
@@ -172,7 +175,6 @@ class ScreenController {
   }
 
   renderBoard(htmlBoard, playerBoard, hitShots, missedShots, isEnemy) {
-    // Clear DOM board
     htmlBoard.innerHTML = "";
 
     const rowHeaders = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
@@ -195,7 +197,7 @@ class ScreenController {
 
         // Add appropriate classes
         if (ship !== null && !isEnemy) {
-          // remove enemy check to show enemy board
+          // remove isEnemy check to show enemy board for debugging
           cell.classList.add("ship");
           cell.innerHTML = ship.type[0].toUpperCase();
         }
@@ -247,11 +249,14 @@ class ScreenController {
   }
 
   async handleAttack(coords) {
-    console.log("Handling attack.");
     const result = await this.gameController.makeAttack(coords);
     if (result) {
       console.log(result);
       this.updateDisplay();
+
+      if (result.isVictory) {
+        this.showVictoryPrompt(result.winner);
+      }
     }
   }
 
@@ -321,6 +326,30 @@ class ScreenController {
         this.isVertical = !this.isVertical;
       }
     });
+  }
+
+  showVictoryPrompt(winner) {
+    const overlay = document.createElement("div");
+    overlay.classList.add("victory-overlay");
+
+    const message = document.createElement("div");
+    message.classList.add("victory-message");
+    message.textContent = `${winner} wins! Click anywhere to play again.`;
+
+    overlay.appendChild(message);
+    document.body.appendChild(overlay);
+
+    overlay.addEventListener("click", () => {
+      overlay.remove();
+      this.newGameLogic();
+    });
+  }
+
+  newGameLogic() {
+    this.gameController = new GameController();
+    this.isVertical = false;
+
+    this.initialize();
   }
 }
 
