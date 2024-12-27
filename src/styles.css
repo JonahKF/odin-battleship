@@ -63,6 +63,17 @@ h6 {
 
 /* Reset Finish */
 
+@import url("https://fonts.googleapis.com/css?family=Inter:400|Jura:400");
+
+:root {
+  --fontWhite: #f7f8f8;
+  --fontYellow: #eec763;
+}
+
+* {
+  font-family: "Jura";
+}
+
 .body {
   display: flex;
   flex-direction: row;
@@ -71,8 +82,11 @@ h6 {
 }
 
 .sidebar {
-  width: 230px;
-  background-color: crimson;
+  width: 300px;
+  min-width: 300px;
+  background-color: #000;
+
+  border-right: 1px solid var(--fontWhite);
 }
 
 .visible {
@@ -84,7 +98,7 @@ h6 {
   height: 90px;
   margin: 11px;
 
-  color: white;
+  color: var(--fontYellow);
   font-weight: 800;
   font-size: 1.7rem;
 
@@ -92,15 +106,24 @@ h6 {
   align-items: center;
   justify-content: center;
 
-  border: 2px solid white;
+  border: 2px solid var(--fontWhite);
   border-radius: 30px;
 }
 
 hr {
   border: none;
-  border-top: 3px dotted white;
+  border-top: 3px dotted var(--fontWhite);
   width: 60%;
   margin: 20px;
+  align-self: center;
+  justify-self: center;
+}
+
+.ship-and-text {
+  width: 80%;
+  height: 100px;
+  background-color: lightgoldenrodyellow;
+
   align-self: center;
   justify-self: center;
 }
@@ -120,7 +143,7 @@ hr {
   align-items: center;
   justify-content: center;
 
-  /* border: 1px solid black; */
+  background-color: #08090a;
 }
 
 .board-title {
@@ -131,6 +154,10 @@ hr {
 
   font-size: 1.7rem;
   font-weight: 600;
+
+  padding-left: 48px;
+
+  color: var(--fontWhite);
 }
 
 .board-one,
@@ -141,9 +168,21 @@ hr {
   grid-template-rows: repeat(11, 1fr);
   gap: 1px;
 
-  /* border: 1px solid cornflowerblue; */
   width: 500px;
   aspect-ratio: 1/1;
+
+  color: var(--fontYellow);
+  font-size: 1.2rem;
+}
+
+.ship {
+  color: var(--fontWhite);
+  font-weight: 800;
+  font-size: 1.5rem;
+}
+
+.ship.hit {
+  color: #1a1a1d;
 }
 
 .cell {
@@ -151,7 +190,8 @@ hr {
   align-items: center;
   justify-content: center;
   aspect-ratio: 1;
-  border: 1px solid #333;
+  border: 1px solid var(--fontWhite);
+  background-color: #1a1a1d;
   cursor: pointer;
 }
 
@@ -165,10 +205,12 @@ hr {
 
 .miss {
   background-color: crimson;
+  cursor: default;
 }
 
 .hit {
   background-color: lightgreen;
+  cursor: default;
 }
 
 .victory-overlay {
@@ -195,10 +237,9 @@ hr {
 
 .footer {
   height: 20px;
-  background-color: #002b36;
+  background-color: #000;
 
   font-size: 0.7rem;
-  font-family: Georgia, "Times New Roman", Times, serif;
   color: #fdf6e3;
   display: flex;
   align-items: center;
