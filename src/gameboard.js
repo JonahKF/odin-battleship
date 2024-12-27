@@ -123,6 +123,4 @@ class Player {
   }
 }
 
-const gameController = () => {};
-
 export { Ship, Gameboard, Player };
