@@ -23,20 +23,24 @@ class GameController {
 
   startGame() {
     // Create new Players (human and AI)
-    const playerOne = new Player(true);
-    const playerTwo = new Player();
+    this.playerOne = new Player(true);
+    this.playerTwo = new Player();
 
     // Set currentPlayer to playerOne
-    this.currentPlayer = playerOne;
+    this.currentPlayer = this.playerOne;
 
     // FOR TESTING - Place two ships for each player
-    playerOne.gameboard.placeShip(carrier, [0, 0], false);
-    playerOne.gameboard.placeShip(submarine, [2, 3], true);
-    playerTwo.gameboard.placeShip(carrier, [0, 0], false);
-    playerTwo.gameboard.placeShip(submarine, [2, 3], true);
+    const carrierOne = new Ship("carrier");
+    const submarineOne = new Ship("submarine");
+    const carrierTwo = new Ship("carrier");
+    const submarineTwo = new Ship("submarine");
+    this.playerOne.gameboard.placeShip(carrierOne, [0, 0], false);
+    this.playerOne.gameboard.placeShip(submarineOne, [2, 3], true);
+    this.playerTwo.gameboard.placeShip(carrierTwo, [0, 0], false);
+    this.playerTwo.gameboard.placeShip(submarineTwo, [2, 3], true);
 
     // Return object with both players
-    return { playerOne, playerTwo };
+    return { playerOne: this.playerOne, playerTwo: this.playerTwo };
   }
 
   placeShip(coords, isVertical) {
@@ -109,63 +113,63 @@ class ScreenController {
     const rowHeaders = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
 
     for (let row = 0; row < 10; row++) {
+      // Add row label
+      const rowLabel = document.createElement("div");
+      rowLabel.classList.add("label");
+      rowLabel.textContent = rowHeaders[row];
+      htmlBoard.appendChild(rowLabel);
+
+      // Add game cells
       for (let col = 0; col < 10; col++) {
-        if (col === 0) {
-          // Add row labels
-          const label = document.createElement("div");
-          label.classList.add("label");
-          label.textContent = rowHeaders[row];
-          htmlBoard.appendChild(label);
-        } else {
-          // Add game cell
-          const cell = document.createElement("div");
-          cell.classList.add("cell");
-          cell.dataset.row = row;
-          cell.dataset.col = col;
+        const cell = document.createElement("div");
+        cell.classList.add("cell");
+        cell.dataset.row = row;
+        cell.dataset.col = col;
 
-          const ship = playerBoard[row][col];
+        const ship = playerBoard[row][col];
 
-          // Add appropriate classes
-          if (ship !== null && !isEnemy) {
-            cell.classList.add("ship");
-            if (ship.sunk) cell.classList.add("sunk");
-          }
-
-          // Check if cell is in missedShots
-          if (missedShots.some(([r, c]) => r === row && c === col)) {
-            cell.classList.add("miss");
-          }
-
-          // Add event listeners based on game phase
-          if (this.gameController.gamePhase === "setup" && !isEnemy) {
-            cell.addEventListener("click", () =>
-              this.handlePlacement([row, col]),
-            );
-          } else if (this.gameController.gamePhase === "playing" && isEnemy) {
-            cell.addEventListener("click", () => this.handleAttack([row, col]));
-          }
-
-          htmlBoard.appendChild(cell);
+        // Add appropriate classes
+        if (ship !== null && !isEnemy) {
+          cell.classList.add("ship");
+          cell.innerHTML = ship.type[0].toUpperCase();
+          if (ship.sunk) cell.classList.add("sunk");
         }
+
+        // Check if cell is in missedShots
+        if (missedShots.some(([r, c]) => r === row && c === col)) {
+          cell.classList.add("miss");
+        }
+
+        // Add event listeners based on game phase
+        if (this.gameController.gamePhase === "setup" && !isEnemy) {
+          cell.addEventListener("click", () =>
+            this.handlePlacement([row, col]),
+          );
+        } else if (this.gameController.gamePhase === "playing" && isEnemy) {
+          cell.addEventListener("click", () => this.handleAttack([row, col]));
+        }
+
+        htmlBoard.appendChild(cell);
       }
     }
 
-    // Add column labels
-    for (let col = 0; col < 11; col++) {
-      if (col === 0) {
-        const label = document.createElement("div");
-        label.classList.add("label");
-        htmlBoard.appendChild(label);
-      } else {
-        const label = document.createElement("div");
-        label.classList.add("label");
-        label.textContent = col;
-        htmlBoard.appendChild(label);
-      }
+    // Add column labels at the bottom
+    // First add empty corner label
+    const cornerLabel = document.createElement("div");
+    cornerLabel.classList.add("label");
+    htmlBoard.appendChild(cornerLabel);
+
+    // Then add number labels (0-9)
+    for (let col = 0; col < 10; col++) {
+      const label = document.createElement("div");
+      label.classList.add("label");
+      label.textContent = col;
+      htmlBoard.appendChild(label);
     }
   }
 
   handlePlacement(coords) {
+    console.log("Handling placement.");
     const placed = this.gameController.placeShip(coords, this.isVertical);
     if (placed) {
       this.updateDisplay();

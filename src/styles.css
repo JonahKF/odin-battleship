@@ -71,7 +71,7 @@ h6 {
 }
 
 .sidebar {
-  width: 300px;
+  width: 230px;
   background-color: crimson;
 }
 
@@ -79,18 +79,58 @@ h6 {
   visibility: visible;
 }
 
+.game-logo {
+  width: 90%;
+  height: 90px;
+  margin: 11px;
+
+  color: white;
+  font-weight: 800;
+  font-size: 1.7rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 2px solid white;
+  border-radius: 30px;
+}
+
+hr {
+  border: none;
+  border-top: 3px dotted white;
+  width: 60%;
+  margin: 20px;
+  align-self: center;
+  justify-self: center;
+}
+
 .boards-container {
+  background-color: bisque;
+  flex-grow: 100;
+  display: flex;
+  flex-direction: row;
 }
 
 .board-wrapper {
   display: flex;
   flex-direction: column;
+  flex-grow: 100;
+
+  align-items: center;
+  justify-content: center;
+
+  /* border: 1px solid black; */
 }
 
 .board-title {
   width: 100%;
-  justify-self: center;
-  align-self: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 1.7rem;
+  font-weight: 600;
 }
 
 .board-one,
@@ -100,16 +140,27 @@ h6 {
   grid-template-columns: repeat(11, 1fr);
   grid-template-rows: repeat(11, 1fr);
   gap: 1px;
+
+  /* border: 1px solid cornflowerblue; */
+  width: 500px;
+  aspect-ratio: 1/1;
 }
 
 .cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   aspect-ratio: 1;
   border: 1px solid #333;
+  cursor: pointer;
 }
 
 .label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   aspect-ratio: 1;
-  border: 1px solid #777;
+  /* border: 1px solid #333; */
 }
 
 .active {
