@@ -62,3 +62,50 @@ h6 {
 }
 
 /* Reset Finish */
+
+.body {
+  display: flex;
+  flex-direction: row;
+
+  height: 100vh;
+}
+
+.sidebar {
+  width: 100px;
+  background-color: crimson;
+}
+
+.visible {
+  visibility: visible;
+}
+
+.boards-container {
+}
+
+.board {
+}
+
+.active {
+  /* This will be the board of the human player */
+}
+
+.footer {
+  height: 20px;
+  background-color: #002b36;
+
+  font-size: 0.7rem;
+  font-family: Georgia, "Times New Roman", Times, serif;
+  color: #fdf6e3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer a {
+  text-decoration: none;
+  color: cornflowerblue;
+}
+
+.footer a:hover {
+  color: plum;
+}
