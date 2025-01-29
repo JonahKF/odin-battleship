@@ -105,12 +105,13 @@ class ScreenController {
   renderBoard(htmlBoard, playerBoard, missedShots, isEnemy) {
     // Clear dom board
     htmlBoard.innerHTML = "";
+
     const rowHeaders = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
 
     for (let row = 0; row < 10; row++) {
       for (let col = 0; col < 10; col++) {
         if (col === 0) {
-          // Add row header
+          // Add row labels
           const label = document.createElement("div");
           label.classList.add("label");
           label.textContent = rowHeaders[row];
@@ -149,7 +150,7 @@ class ScreenController {
       }
     }
 
-    // Create footers
+    // Add column labels
     for (let col = 0; col < 11; col++) {
       if (col === 0) {
         const label = document.createElement("div");
