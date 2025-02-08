@@ -120,12 +120,40 @@ hr {
 }
 
 .ship-and-text {
-  width: 80%;
-  height: 100px;
-  background-color: lightgoldenrodyellow;
+  width: 90%;
+  height: auto;
+  padding: 20px 0px 20px 0px;
+  border: 1px solid var(--fontWhite);
 
   align-self: center;
   justify-self: center;
+}
+
+.draggable-ship {
+  display: flex;
+  justify-content: center;
+
+  cursor: move;
+  margin: 15px 0px 15px 0px;
+  gap: 1px;
+  user-select: none;
+}
+
+.draggable-ship.vertical {
+  flex-direction: column;
+}
+
+.ship-cell {
+  width: 44.55px;
+  aspect-ratio: 1;
+  border: 1px solid var(--fontWhite);
+  background-color: #1a1a1d;
+  font-weight: 800;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
 }
 
 .boards-container {

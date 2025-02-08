@@ -36,6 +36,13 @@ class Gameboard {
     this.missedShots = [];
     this.hitShots = [];
     this.ships = [];
+    this.queuedShips = [
+      "carrier",
+      "battleship",
+      "destroyer",
+      "submarine",
+      "patrolboat",
+    ];
   }
 
   checkValidPlacement(ship, coords, isVertical) {
@@ -75,6 +82,8 @@ class Gameboard {
     }
 
     this.ships.push(ship);
+    this.queuedShips.splice(this.queuedShips.indexOf(ship.type), 1); // Remove from queue
+
     return true;
   }
 

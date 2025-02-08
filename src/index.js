@@ -11,13 +11,13 @@ class GameController {
     this.playerTwo = null;
     this.currentPlayer = null;
     this.gamePhase = "setup";
-    this.shipTypes = [
-      "carrier",
-      "battleship",
-      "destroyer",
-      "submarine",
-      "patrolboat",
-    ];
+    this.shipTypes = {
+      carrier: { length: 5, placed: false },
+      battleship: { length: 4, placed: false },
+      destroyer: { length: 3, placed: false },
+      submarine: { length: 3, placed: false },
+      patrolboat: { length: 2, placed: false },
+    };
     this.currentShipIndex = 0;
   }
 
@@ -30,28 +30,28 @@ class GameController {
     this.currentPlayer = this.playerOne;
 
     // FOR TESTING - Place two ships for each player
-    const carrierOne = new Ship("carrier");
-    const submarineOne = new Ship("submarine");
-    const carrierTwo = new Ship("carrier");
-    const submarineTwo = new Ship("submarine");
-    this.playerOne.gameboard.placeShip(carrierOne, [2, 3], false);
-    this.playerOne.gameboard.placeShip(submarineOne, [5, 4], true);
-    this.playerTwo.gameboard.placeShip(carrierTwo, [0, 0], false);
-    this.playerTwo.gameboard.placeShip(submarineTwo, [2, 3], true);
-    this.gamePhase = "playing";
+    // const carrierOne = new Ship("carrier");
+    // const submarineOne = new Ship("submarine");
+    // const carrierTwo = new Ship("carrier");
+    // const submarineTwo = new Ship("submarine");
+    // this.playerOne.gameboard.placeShip(carrierOne, [2, 3], false);
+    // this.playerOne.gameboard.placeShip(submarineOne, [5, 4], true);
+    // this.playerTwo.gameboard.placeShip(carrierTwo, [0, 0], false);
+    // this.playerTwo.gameboard.placeShip(submarineTwo, [2, 3], true);
+    // this.gamePhase = "playing";
 
     // Return object with both players
     return { playerOne: this.playerOne, playerTwo: this.playerTwo };
   }
 
-  placeShip(coords, isVertical) {
+  placeShip(coords, shipType, isVertical) {
     // Check if all ships placed
-    if (this.currentShipIndex >= this.shipTypes.length) {
+    if (this.shipTypes[shipType].placed) {
       return false;
     }
 
     // Create new ship of current type
-    const newShip = new Ship(this.shipTypes[this.currentShipIndex]);
+    const newShip = new Ship(shipType);
 
     // Try to place ship on current player's board
     const placed = this.currentPlayer.gameboard.placeShip(
@@ -62,12 +62,18 @@ class GameController {
 
     // If successful (placed can be false if coords occupied already):
     if (placed) {
-      this.currentShipIndex++;
-      // Check if all ships placed
-      if (this.currentShipIndex === this.shipTypes.length) {
+      this.shipTypes[shipType].placed = true;
+
+      const allShipsPlaced = Object.values(this.shipTypes).every(
+        (ship) => ship.placed,
+      );
+
+      if (allShipsPlaced) {
         if (this.currentPlayer === this.playerOne) {
           this.currentPlayer = this.playerTwo;
-          this.currentShipIndex = 0; // Reset for player 2
+          Object.keys(this.shipTypes).forEach((type) => {
+            this.shipTypes[type].placed = false;
+          });
         } else {
           this.gamePhase = "playing";
           this.currentPlayer = this.playerOne;
@@ -75,7 +81,6 @@ class GameController {
       }
     }
 
-    // Return whether placement was successful
     return placed;
   }
 
@@ -193,12 +198,8 @@ class ScreenController {
         if (isHit) cell.classList.add("hit");
         if (isMissed) cell.classList.add("miss");
 
-        // Add event listeners based on game phase
-        if (this.gameController.gamePhase === "setup" && !isEnemy) {
-          cell.addEventListener("click", () =>
-            this.handlePlacement([row, col]),
-          );
-        } else if (
+        // Add event listeners
+        if (
           this.gameController.gamePhase === "playing" &&
           isEnemy &&
           !isAttacked
@@ -225,13 +226,45 @@ class ScreenController {
     }
   }
 
-  handlePlacement(coords) {
-    console.log("Handling placement.");
-    const placed = this.gameController.placeShip(coords, this.isVertical);
-    if (placed) {
-      this.updateDisplay();
+  updateSidebar() {
+    const sidebar = document.querySelector(".sidebar");
+
+    if (this.gameController.gamePhase === "setup") {
+      // Populate w/ Ships for drag-and-drop
+      const ships = document.querySelector(".ship-and-text");
+      ships.innerHTML = "";
+
+      const remainingShips = Object.entries(this.gameController.shipTypes)
+        .filter(([_, data]) => !data.placed)
+        .map(([shipType, _]) => shipType);
+
+      remainingShips.forEach((shipType) => {
+        const shipDiv = document.createElement("div");
+        shipDiv.classList.add("draggable-ship");
+        shipDiv.dataset.shipType = shipType;
+
+        // Create cells based on ship length
+        const shipLength = this.gameController.shipTypes[shipType].length;
+        for (let i = 0; i < shipLength; i++) {
+          const cell = document.createElement("div");
+          cell.classList.add("ship-cell");
+          cell.textContent = shipType[0].toUpperCase();
+          shipDiv.appendChild(cell);
+        }
+
+        // Add drag event listeners
+
+        ships.appendChild(shipDiv);
+      });
+    }
+
+    if (this.gameController.getGameState.gamePhase === "playing") {
+      // Terminal-like text updates about game state
+      const textbox = document.querySelector(".ship-and-text");
     }
   }
+
+  handlePlacement(coords, shipType) {}
 
   async handleAttack(coords) {
     const result = await this.gameController.makeAttack(coords);
@@ -320,6 +353,7 @@ class ScreenController {
     // Start game
     this.gameController.startGame();
     this.updateDisplay();
+    this.updateSidebar();
 
     // Add rotation keyboard listener
     document.addEventListener("keypress", (e) => {
