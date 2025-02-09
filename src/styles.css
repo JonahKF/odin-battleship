@@ -143,6 +143,14 @@ hr {
   flex-direction: column;
 }
 
+.dragging {
+  opacity: 0.5;
+}
+
+.drag-over {
+  background-color: pink !important;
+}
+
 .ship-cell {
   width: 44.55px;
   aspect-ratio: 1;

@@ -190,6 +190,24 @@ class ScreenController {
         const isMissed = missedShots.some(([r, c]) => r === row && c === col);
         const isAttacked = isHit || isMissed;
 
+        if (this.gameController.gamePhase === "setup" && !isEnemy) {
+          cell.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            cell.classList.add("drag-over");
+          });
+
+          cell.addEventListener("dragleave", () => {
+            cell.classList.remove("drag-over");
+          });
+
+          cell.addEventListener("drop", (e) => {
+            e.preventDefault();
+            cell.classList.remove("drag-over");
+            const shipType = e.dataTransfer.getData("text/plain");
+            this.handleShipPlacement([row, col], shipType, this.isVertical);
+          });
+        }
+
         if (ship !== null && !isEnemy) {
           cell.classList.add("ship");
           cell.innerHTML = ship.type[0].toUpperCase();
@@ -227,7 +245,7 @@ class ScreenController {
   }
 
   updateSidebar() {
-    const sidebar = document.querySelector(".sidebar");
+    // const sidebar = document.querySelector(".sidebar");
 
     if (this.gameController.gamePhase === "setup") {
       // Populate w/ Ships for drag-and-drop
@@ -242,6 +260,10 @@ class ScreenController {
         const shipDiv = document.createElement("div");
         shipDiv.classList.add("draggable-ship");
         shipDiv.dataset.shipType = shipType;
+        shipDiv.draggable = true;
+
+        shipDiv.addEventListener("dragstart", this.handleDragStart.bind(this));
+        shipDiv.addEventListener("dragend", this.handleDragEnd.bind(this));
 
         // Create cells based on ship length
         const shipLength = this.gameController.shipTypes[shipType].length;
@@ -251,8 +273,6 @@ class ScreenController {
           cell.textContent = shipType[0].toUpperCase();
           shipDiv.appendChild(cell);
         }
-
-        // Add drag event listeners
 
         ships.appendChild(shipDiv);
       });
@@ -264,7 +284,32 @@ class ScreenController {
     }
   }
 
-  handlePlacement(coords, shipType) {}
+  handleDragStart(e) {
+    e.dataTransfer.setData("text/plain", e.target.dataset.shipType);
+    e.target.classList.add("dragging");
+  }
+
+  handleDragEnd(e) {
+    e.target.classList.remove("dragging");
+  }
+
+  handleShipPlacement(coords, shipType, isVertical) {
+    const placed = this.gameController.placeShip(coords, shipType, isVertical);
+
+    if (placed) {
+      this.updateDisplay();
+      this.updateSidebar();
+
+      // Check if all ships are placed
+      const allShipsPlaced = Object.values(this.gameController.shipTypes).every(
+        (ship) => ship.placed,
+      );
+
+      if (allShipsPlaced) {
+        // Start game
+      }
+    }
+  }
 
   async handleAttack(coords) {
     const result = await this.gameController.makeAttack(coords);
