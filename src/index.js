@@ -69,12 +69,21 @@ class GameController {
       );
 
       if (allShipsPlaced) {
-        if (this.currentPlayer === this.playerOne) {
+        if (
+          this.currentPlayer === this.playerOne &&
+          this.playerTwo.human === true
+        ) {
           this.currentPlayer = this.playerTwo;
           Object.keys(this.shipTypes).forEach((type) => {
             this.shipTypes[type].placed = false;
           });
+        } else if (
+          this.currentPlayer === this.playerOne &&
+          this.playerTwo.human === false
+        ) {
+          this.placeComputerShips();
         } else {
+          // All ships placed
           this.gamePhase = "playing";
           this.currentPlayer = this.playerOne;
         }
@@ -82,6 +91,39 @@ class GameController {
     }
 
     return placed;
+  }
+
+  placeComputerShips() {
+    this.currentPlayer = this.playerTwo;
+    Object.keys(this.shipTypes).forEach((type) => {
+      this.shipTypes[type].placed = false;
+    });
+
+    const getRandomCoord = () => {
+      return [Math.floor(Math.random() * 10), Math.floor(Math.random() * 10)];
+    };
+
+    Object.keys(this.shipTypes).forEach((ship) => {
+      let coords = getRandomCoord();
+      let isVertical = Math.random() < 0.5;
+
+      while (
+        !this.playerTwo.gameboard.checkValidPlacement(
+          new Ship(ship),
+          coords,
+          isVertical,
+        )
+      ) {
+        coords = getRandomCoord(); // Reassign existing variables
+        isVertical = Math.random() < 0.5;
+      }
+
+      this.placeShip(coords, ship, isVertical);
+    });
+
+    // All ships placed
+    this.gamePhase = "playing";
+    this.currentPlayer = this.playerOne;
   }
 
   makeAttack(coords) {
@@ -122,7 +164,7 @@ class GameController {
   switchTurn() {
     this.currentPlayer =
       this.currentPlayer === this.playerOne ? this.playerTwo : this.playerOne;
-    console.log(`Switching to ${this.currentPlayer.name}`);
+    // console.log(`Switching to ${this.currentPlayer.name}`);
   }
 
   computerAttack() {
@@ -191,6 +233,7 @@ class ScreenController {
         const isAttacked = isHit || isMissed;
 
         if (this.gameController.gamePhase === "setup" && !isEnemy) {
+          // Consider changing below to Mouse events
           cell.addEventListener("dragover", (e) => {
             e.preventDefault();
             cell.classList.add("drag-over");
@@ -262,6 +305,7 @@ class ScreenController {
         shipDiv.dataset.shipType = shipType;
         shipDiv.draggable = true;
 
+        // Consider changing to mouse events
         shipDiv.addEventListener("dragstart", this.handleDragStart.bind(this));
         shipDiv.addEventListener("dragend", this.handleDragEnd.bind(this));
 
@@ -281,6 +325,7 @@ class ScreenController {
     if (this.gameController.getGameState.gamePhase === "playing") {
       // Terminal-like text updates about game state
       const textbox = document.querySelector(".ship-and-text");
+      textbox.innerHTML = "";
     }
   }
 
