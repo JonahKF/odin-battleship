@@ -236,15 +236,49 @@ class ScreenController {
           cell.addEventListener("dragover", (e) => {
             e.preventDefault();
             cell.classList.add("drag-over");
+
+            // Color adjacent cells for placement visualization
+            const dragging = document.querySelector(".dragging");
+            const dragShipLength =
+              this.gameController.shipTypes[dragging.dataset.shipType].length;
+            const currentRow = parseInt(cell.dataset.row);
+            const currentCol = parseInt(cell.dataset.col);
+
+            const allCells = htmlBoard.querySelectorAll(".cell");
+            allCells.forEach((cell) => cell.classList.remove("drag-over"));
+
+            for (let i = 0; i < dragShipLength; i++) {
+              let targetCell;
+              if (this.isVertical) {
+                if (currentRow + i < 10) {
+                  // Check bounds
+                  targetCell = htmlBoard.querySelector(
+                    `[data-row="${currentRow + i}"][data-col="${currentCol}"]`,
+                  );
+                }
+              } else {
+                if (currentCol + i < 10) {
+                  // Check bounds
+                  targetCell = htmlBoard.querySelector(
+                    `[data-row="${currentRow}"][data-col="${currentCol + i}"]`,
+                  );
+                }
+              }
+              if (targetCell) {
+                targetCell.classList.add("drag-over");
+              }
+            }
           });
 
           cell.addEventListener("dragleave", () => {
-            cell.classList.remove("drag-over");
+            const allCells = htmlBoard.querySelectorAll(".cell");
+            allCells.forEach((cell) => cell.classList.remove("drag-over"));
           });
 
           cell.addEventListener("drop", (e) => {
             e.preventDefault();
-            cell.classList.remove("drag-over");
+            const allCells = htmlBoard.querySelectorAll(".cell");
+            allCells.forEach((cell) => cell.classList.remove("drag-over"));
             const shipType = e.dataTransfer.getData("text/plain");
             this.handleShipPlacement([row, col], shipType, this.isVertical);
           });
