@@ -233,7 +233,6 @@ class ScreenController {
         const isAttacked = isHit || isMissed;
 
         if (this.gameController.gamePhase === "setup" && !isEnemy) {
-          // Consider changing below to Mouse events
           cell.addEventListener("dragover", (e) => {
             e.preventDefault();
             cell.classList.add("drag-over");
@@ -305,7 +304,6 @@ class ScreenController {
         shipDiv.dataset.shipType = shipType;
         shipDiv.draggable = true;
 
-        // Consider changing to mouse events
         shipDiv.addEventListener("dragstart", this.handleDragStart.bind(this));
         shipDiv.addEventListener("dragend", this.handleDragEnd.bind(this));
 
@@ -332,6 +330,8 @@ class ScreenController {
   handleDragStart(e) {
     e.dataTransfer.setData("text/plain", e.target.dataset.shipType);
     e.target.classList.add("dragging");
+
+    e.dataTransfer.setDragImage(e.target, 20, e.target.offsetHeight / 2);
   }
 
   handleDragEnd(e) {
