@@ -208,6 +208,11 @@ class ScreenController {
       for (let col = 0; col < 10; col++) {
         const cell = document.createElement("div");
         cell.classList.add("cell");
+        if (!isEnemy) cell.classList.add("player");
+        if (isEnemy && this.gameController.gamePhase === "playing") {
+          cell.classList.add("enemy-active");
+        }
+
         cell.dataset.row = rowHeaders[row];
         cell.dataset.rownum = row;
         cell.dataset.col = col;
@@ -257,7 +262,7 @@ class ScreenController {
 
           cell.addEventListener("mouseover", () => {
             const tooltip = document.querySelector(".tooltip");
-            tooltip.style.display = "block";
+            tooltip.style.display = "flex";
           });
 
           cell.addEventListener("mouseout", () => {

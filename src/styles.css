@@ -268,6 +268,14 @@ hr {
   aspect-ratio: 1;
   border: 1px solid var(--fontWhite);
   background-color: #1a1a1d;
+}
+
+.player:hover {
+  background-color: #333233;
+}
+
+.enemy-active:hover {
+  background-color: #dc322f;
   cursor: pointer;
 }
 
@@ -283,6 +291,12 @@ hr {
   display: none;
   pointer-events: none;
   z-index: 1000;
+
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+
+  font-size: 1.2rem;
 }
 
 .label {
