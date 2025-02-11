@@ -22,35 +22,20 @@ class GameController {
   }
 
   startGame() {
-    // Create new Players (human and AI)
+    // Create new Players (human and computer)
     this.playerOne = new Player("Player One", true);
     this.playerTwo = new Player("Computer Player");
 
     // Set currentPlayer to playerOne
     this.currentPlayer = this.playerOne;
 
-    // FOR TESTING - Place two ships for each player
-    // const carrierOne = new Ship("carrier");
-    // const submarineOne = new Ship("submarine");
-    // const carrierTwo = new Ship("carrier");
-    // const submarineTwo = new Ship("submarine");
-    // this.playerOne.gameboard.placeShip(carrierOne, [2, 3], false);
-    // this.playerOne.gameboard.placeShip(submarineOne, [5, 4], true);
-    // this.playerTwo.gameboard.placeShip(carrierTwo, [0, 0], false);
-    // this.playerTwo.gameboard.placeShip(submarineTwo, [2, 3], true);
-    // this.gamePhase = "playing";
-
     // Return object with both players
     return { playerOne: this.playerOne, playerTwo: this.playerTwo };
   }
 
   placeShip(coords, shipType, isVertical) {
-    // Check if all ships placed
-    if (this.shipTypes[shipType].placed) {
-      return false;
-    }
+    if (this.shipTypes[shipType].placed) return false;
 
-    // Create new ship of current type
     const newShip = new Ship(shipType);
 
     // Try to place ship on current player's board
@@ -60,7 +45,7 @@ class GameController {
       isVertical,
     );
 
-    // If successful (placed can be false if coords occupied already):
+    // If successful (placed can be false if coords invalid):
     if (placed) {
       this.shipTypes[shipType].placed = true;
 
@@ -164,7 +149,6 @@ class GameController {
   switchTurn() {
     this.currentPlayer =
       this.currentPlayer === this.playerOne ? this.playerTwo : this.playerOne;
-    // console.log(`Switching to ${this.currentPlayer.name}`);
   }
 
   computerAttack() {
@@ -224,7 +208,8 @@ class ScreenController {
       for (let col = 0; col < 10; col++) {
         const cell = document.createElement("div");
         cell.classList.add("cell");
-        cell.dataset.row = row;
+        cell.dataset.row = rowHeaders[row];
+        cell.dataset.rownum = row;
         cell.dataset.col = col;
 
         const ship = playerBoard[row][col];
@@ -241,7 +226,7 @@ class ScreenController {
             const dragging = document.querySelector(".dragging");
             const dragShipLength =
               this.gameController.shipTypes[dragging.dataset.shipType].length;
-            const currentRow = parseInt(cell.dataset.row);
+            const currentRow = parseInt(cell.dataset.rownum);
             const currentCol = parseInt(cell.dataset.col);
 
             const allCells = htmlBoard.querySelectorAll(".cell");
@@ -253,14 +238,14 @@ class ScreenController {
                 if (currentRow + i < 10) {
                   // Check bounds
                   targetCell = htmlBoard.querySelector(
-                    `[data-row="${currentRow + i}"][data-col="${currentCol}"]`,
+                    `[data-rownum="${currentRow + i}"][data-col="${currentCol}"]`,
                   );
                 }
               } else {
                 if (currentCol + i < 10) {
                   // Check bounds
                   targetCell = htmlBoard.querySelector(
-                    `[data-row="${currentRow}"][data-col="${currentCol + i}"]`,
+                    `[data-rownum="${currentRow}"][data-col="${currentCol + i}"]`,
                   );
                 }
               }
@@ -268,6 +253,29 @@ class ScreenController {
                 targetCell.classList.add("drag-over");
               }
             }
+          });
+
+          cell.addEventListener("mouseover", () => {
+            const tooltip = document.querySelector(".tooltip");
+            tooltip.style.display = "block";
+          });
+
+          cell.addEventListener("mouseout", () => {
+            const tooltip = document.querySelector(".tooltip");
+            tooltip.style.display = "none";
+          });
+
+          cell.addEventListener("mousemove", (e) => {
+            const tooltip = document.querySelector(".tooltip");
+            const x = e.clientX;
+            const y = e.clientY;
+            const offsetX = 15;
+            const offsetY = -30;
+
+            tooltip.style.left = `${x + offsetX}px`;
+            tooltip.style.top = `${y + offsetY}px`;
+
+            tooltip.innerHTML = `${cell.dataset.row}, ${cell.dataset.col}`;
           });
 
           cell.addEventListener("dragleave", () => {
@@ -292,7 +300,6 @@ class ScreenController {
         if (isHit) cell.classList.add("hit");
         if (isMissed) cell.classList.add("miss");
 
-        // Add event listeners
         if (
           this.gameController.gamePhase === "playing" &&
           isEnemy &&
@@ -321,8 +328,6 @@ class ScreenController {
   }
 
   updateSidebar() {
-    // const sidebar = document.querySelector(".sidebar");
-
     if (this.gameController.gamePhase === "setup") {
       // Populate w/ Ships for drag-and-drop
       const ships = document.querySelector(".ship-and-text");
@@ -427,6 +432,7 @@ class ScreenController {
         setTimeout(async () => {
           const computerResult = this.gameController.computerAttack();
           this.updateDisplay();
+          this.updateSidebar();
 
           const computerVictory = this.gameController.checkVictory(
             this.gameController.playerOne,
