@@ -352,9 +352,29 @@ class ScreenController {
 
         ships.appendChild(shipDiv);
       });
+
+      // Rotation button with kbd tag
+      const rotateShipBtn = document.createElement("button");
+      rotateShipBtn.classList.add("rotate-button");
+      const kbd = document.createElement("kbd");
+      kbd.dataset.kbd = "R";
+      kbd.classList.add("rotate-kbd");
+      kbd.innerHTML = "R";
+      const indicator = document.createElement("div");
+      indicator.classList.add("rotate-indicator");
+
+      rotateShipBtn.innerHTML = "Rotate";
+      rotateShipBtn.appendChild(kbd);
+      rotateShipBtn.appendChild(indicator);
+
+      rotateShipBtn.addEventListener("click", () => {
+        this.isVertical = !this.isVertical;
+      });
+
+      ships.appendChild(rotateShipBtn);
     }
 
-    if (this.gameController.getGameState.gamePhase === "playing") {
+    if (this.gameController.gamePhase === "playing") {
       // Terminal-like text updates about game state
       const textbox = document.querySelector(".ship-and-text");
       textbox.innerHTML = "";
@@ -395,6 +415,7 @@ class ScreenController {
     if (result) {
       console.log(result);
       this.updateDisplay();
+      this.updateSidebar();
 
       if (result.isVictory) {
         this.showVictoryPrompt(result.winner);
@@ -485,6 +506,10 @@ class ScreenController {
         this.isVertical = !this.isVertical;
       }
     });
+  }
+
+  rotateShips() {
+    this.isVertical = !this.isVertical;
   }
 
   showVictoryPrompt(winner) {

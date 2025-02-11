@@ -137,7 +137,7 @@ hr {
   display: inline-flex;
   justify-content: center;
   cursor: move;
-  margin: 15px auto;
+  margin: 5px 20px 5px 20px;
   gap: 1px;
   user-select: none;
   width: fit-content;
@@ -145,6 +145,42 @@ hr {
 
 .draggable-ship.vertical {
   flex-direction: column;
+}
+
+.rotate-button {
+  border: 1px solid var(--fontWhite);
+  background-color: #1a1a1d;
+  color: white;
+  cursor: pointer;
+
+  margin-top: 20px;
+  width: 200px;
+  height: 30px;
+  padding: 0 5px 2px 76px;
+
+  display: flex;
+  align-items: center;
+
+  transition: 0.3s;
+}
+
+.rotate-button:hover {
+  background-color: #3c3c3c;
+  transition: 0.3s;
+}
+
+.rotate-kbd {
+  margin-left: auto;
+  margin-top: 2px;
+  border: 1px solid #d9dbe1;
+  height: 20px;
+  aspect-ratio: 1;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 0.8rem;
 }
 
 .dragging {
