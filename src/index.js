@@ -195,6 +195,12 @@ class ScreenController {
   renderBoard(htmlBoard, playerBoard, hitShots, missedShots, isEnemy) {
     htmlBoard.innerHTML = "";
 
+    if (isEnemy && this.gameController.gamePhase === "setup") {
+      const enemyOverlay = document.createElement("div");
+      enemyOverlay.classList.add("board-two-overlay");
+      htmlBoard.appendChild(enemyOverlay);
+    }
+
     const rowHeaders = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
 
     for (let row = 0; row < 10; row++) {
@@ -416,8 +422,29 @@ class ScreenController {
 
       if (allShipsPlaced) {
         // Start game
+        this.gameStartTransition();
       }
     }
+  }
+
+  gameStartTransition() {
+    // Prompt that game has started
+    const overlay = document.createElement("div");
+    overlay.classList.add("overlay");
+
+    const message = document.createElement("div");
+    message.classList.add("game-start-message");
+    message.textContent = "Battleship start. Click anywhere to begin.";
+
+    overlay.appendChild(message);
+    document.body.appendChild(overlay);
+
+    overlay.addEventListener("click", () => {
+      overlay.remove();
+    });
+
+    // Remove filter over enemy board
+    this.removeEnemyBoardOverlay();
   }
 
   async handleAttack(coords) {
@@ -505,6 +532,11 @@ class ScreenController {
     }
   }
 
+  removeEnemyBoardOverlay() {
+    const overlay = document.querySelector(".board-two-overlay");
+    overlay.style.display = "none";
+  }
+
   initialize() {
     // Start game
     this.gameController.startGame();
@@ -525,7 +557,7 @@ class ScreenController {
 
   showVictoryPrompt(winner) {
     const overlay = document.createElement("div");
-    overlay.classList.add("victory-overlay");
+    overlay.classList.add("overlay");
 
     const message = document.createElement("div");
     message.classList.add("victory-message");

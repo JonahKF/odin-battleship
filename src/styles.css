@@ -220,6 +220,7 @@ hr {
   justify-content: center;
 
   background-color: #08090a;
+  position: relative;
 }
 
 .board-title {
@@ -249,6 +250,21 @@ hr {
 
   color: var(--fontYellow);
   font-size: 1.2rem;
+
+  position: relative;
+}
+
+.board-two-overlay {
+  display: flex;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: calc(100% - 44px);
+  height: calc(100% - 44px);
+  background-color: rgba(0, 0, 0, 0.85);
+  /* backdrop-filter: blur(1px); */
+  z-index: 1000;
 }
 
 .ship {
@@ -317,7 +333,7 @@ hr {
   cursor: default;
 }
 
-.victory-overlay {
+.overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -329,6 +345,14 @@ hr {
   align-items: center;
   z-index: 1000;
   cursor: pointer;
+}
+
+.game-start-message {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  font-size: 24px;
+  text-align: center;
 }
 
 .victory-message {
