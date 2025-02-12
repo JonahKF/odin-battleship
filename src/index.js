@@ -157,7 +157,15 @@ class GameController {
     };
 
     let coords = getRandomCoord();
-    while (this.playerOne.gameboard.missedShots.includes(coords)) {
+    while (
+      this.playerOne.gameboard.missedShots.some(
+        ([r, c]) => r === coords[0] && c === coords[1],
+      ) ||
+      this.playerOne.gameboard.hitShots.some(
+        ([r, c]) => r === coords[0] && c === coords[1],
+      )
+    ) {
+      console.log(`${coords} already hit, selecting new coordinates.`);
       coords = getRandomCoord();
     }
 
@@ -487,6 +495,8 @@ class ScreenController {
 
       if (result.isVictory) {
         this.showVictoryPrompt(result.winner);
+        const tooltip = document.querySelector(".tooltip");
+        tooltip.style.display = "none";
         return;
       }
 
