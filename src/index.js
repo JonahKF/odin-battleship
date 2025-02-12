@@ -303,6 +303,31 @@ class ScreenController {
           });
         }
 
+        if (this.gameController.gamePhase === "playing" && isEnemy) {
+          cell.addEventListener("mouseover", () => {
+            const tooltip = document.querySelector(".tooltip");
+            tooltip.style.display = "flex";
+          });
+
+          cell.addEventListener("mouseout", () => {
+            const tooltip = document.querySelector(".tooltip");
+            tooltip.style.display = "none";
+          });
+
+          cell.addEventListener("mousemove", (e) => {
+            const tooltip = document.querySelector(".tooltip");
+            const x = e.clientX;
+            const y = e.clientY;
+            const offsetX = 15;
+            const offsetY = -30;
+
+            tooltip.style.left = `${x + offsetX}px`;
+            tooltip.style.top = `${y + offsetY}px`;
+
+            tooltip.innerHTML = `${cell.dataset.row}, ${cell.dataset.col}`;
+          });
+        }
+
         if (ship !== null && !isEnemy) {
           cell.classList.add("ship");
           cell.innerHTML = ship.type[0].toUpperCase();
@@ -450,7 +475,13 @@ class ScreenController {
   async handleAttack(coords) {
     const result = await this.gameController.makeAttack(coords);
     if (result) {
-      console.log(result);
+      console.log(result.playerResult);
+      const tooltip = document.querySelector(".tooltip");
+      const resultText =
+        String(result.playerResult).charAt(0).toUpperCase() +
+        String(result.playerResult).slice(1);
+      tooltip.innerHTML = resultText;
+
       this.updateDisplay();
       this.updateSidebar();
 
@@ -534,7 +565,7 @@ class ScreenController {
 
   removeEnemyBoardOverlay() {
     const overlay = document.querySelector(".board-two-overlay");
-    overlay.style.display = "none";
+    if (overlay) overlay.style.display = "none";
   }
 
   initialize() {

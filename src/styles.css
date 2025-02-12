@@ -188,7 +188,8 @@ hr {
 }
 
 .drag-over {
-  background-color: pink !important;
+  background-color: #859900 !important;
+  transition: 0.1s;
 }
 
 .ship-cell {
@@ -202,6 +203,7 @@ hr {
   align-items: center;
   justify-content: center;
   color: white;
+  transition: 0.1s;
 }
 
 .boards-container {
@@ -291,7 +293,7 @@ hr {
 }
 
 .enemy-active:hover {
-  background-color: #dc322f;
+  background-color: var(--fontYellow);
   cursor: pointer;
 }
 
@@ -324,13 +326,13 @@ hr {
 }
 
 .miss {
-  background-color: crimson;
-  cursor: default;
+  background-color: crimson !important;
+  cursor: default !important;
 }
 
 .hit {
-  background-color: lightgreen;
-  cursor: default;
+  background-color: lightgreen !important;
+  cursor: default !important;
 }
 
 .overlay {
